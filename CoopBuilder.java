@@ -1,4 +1,4 @@
-package cooptest17;
+package cooptest16summary;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,8 +22,8 @@ public class CoopBuilder implements ContextBuilder<Object> {
 	@Override
 	public Context build(Context<Object> context) {
 		// TODO Auto-generated method stub
-		context.setId("cooptest17");
-		String modelVersion = "503"; // random baseline validation
+		context.setId("cooptest15random");
+		String modelVersion = "520"; // summary of works as of 2021-03-26
 		
 		// get parameters
 		Parameters params = RunEnvironment.getInstance().getParameters();
@@ -37,10 +37,7 @@ public class CoopBuilder implements ContextBuilder<Object> {
 		int agentUCount = params.getInteger("agentu_count");
 		double agentUpopThrMean = params.getDouble("agentu_pop_thr_mean"); 
 		double agentUpopThrSD = params.getDouble("agentu_pop_thr_sd");
-		//String algorithm = params.getString("algorithm"); // removed in v4.0.0		
-		//boolean validation = params.getBoolean("validation"); //v4.0.0
 		String objective = params.getString("objective"); // Calibration or Validation v4.0.0
-		//String calibrationFolderDateTime = params.getString("calibrationFolderDateTime"); // v4.0.0
 		double epsilon = params.getDouble("epsilon");
 		double alpha = params.getDouble("alpha");
 		ArrayList<String> algorithmList = new ArrayList<String>(); // v4.0.0
@@ -76,7 +73,7 @@ public class CoopBuilder implements ContextBuilder<Object> {
         String strPathOut = "output/"+"coop"+modelVersion+
         		"_mu"+strMean+"_sd"+strSD+"_g"+strGamma+"_n"+strN+"_e"+strEpsilon+"_a"+strAlpha+"_"+strDate;
         if (Objects.equals(objective, "Calibration_writeThresholds")) {
-        		strPathOut = strPathOut + "_thr";
+    		strPathOut = strPathOut + "_thr";
         }
         File dirOut = new File(strPathOut);
         dirOut.mkdir();
@@ -103,13 +100,13 @@ public class CoopBuilder implements ContextBuilder<Object> {
 		}
 		
 		// AgentG
-		AgentG agentG = new AgentG(/*algorithm, */agentUCount, stepsPerEpisode, episodesPerRun,
+		AgentG agentG = new AgentG(agentUCount, stepsPerEpisode, episodesPerRun,
 				numLevelsVarIndependent, numLevelsVarResponse,
 				gamma, epsilon, alpha);
 		context.add(agentG);
 		
 		// Registrar
-Registrar registrar = new Registrar(agentG, agentUArray, agentUCount);
+		Registrar registrar = new Registrar(agentG, agentUArray, agentUCount);
 		
 		for (AgentU agentU : agentUArray) {
 			agentU.setRegistrar(registrar);
@@ -120,7 +117,7 @@ Registrar registrar = new Registrar(agentG, agentUArray, agentUCount);
 		// RunMaker // in v4.0.0 runs batches with a list of algorithms
 		RunMaker runMaker = new RunMaker(agentG, agentUArray, agentUCount, stepsPerEpisode, 
 				agentUpopThrMean, agentUpopThrSD, /*runsPerSet,*/ strPathOut, 
-				/*validation,*/ objective, /*calibrationFolderDateTime,*/ 
+				objective,  
 				registrar, algorithmList);
 		context.add(runMaker);
 		

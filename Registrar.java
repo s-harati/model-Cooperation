@@ -1,4 +1,4 @@
-package cooptest17;
+package cooptest16summary;
 
 public class Registrar {
 
@@ -32,10 +32,9 @@ public class Registrar {
 	}
 	
 	public void resetStats() {
-		this.nLast = 0; this.nSum = 0;
-		System.out.println("*in Registrar.resetStats() . new nLast="+this.nLast+"  new nSum="+this.nSum+" *");
-		for (AgentU agentU : agentUArray) {
-			agentU.setDecision(0);
+		this.nLast = this.nSum = 0;
+		for (AgentU agentU : agentUArray) { 	// added v5.0.0
+			agentU.setDecision(0);				// this function is called at the beginning of each episode, hence no prior decision.
 		}
 	}
 	

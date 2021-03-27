@@ -1,4 +1,4 @@
-package cooptest17;
+package cooptest16summary;
 
 import java.util.Random;
 
@@ -9,16 +9,10 @@ public class AgentU {
 	private int maxSums;
 	
 	public AgentU(int maxSums) {
-		//this.signalMaker = signalMaker;
-		//this.setDecision(0);
-		//this.setThreshold(thrMean, thrSD);
 		this.maxSums = maxSums; // added in version 2.2.2 : the maximum possible score for an action. will be used to scale decision interval down to [0,1]
 		this.setDecision(0);
 	}
 	
-/*	public void setAgentG(AgentG agentG) {
-		this.agentG = agentG;
-	}*/
 	
 	public void setRegistrar(Registrar registrar) {
 		this.registrar = registrar;

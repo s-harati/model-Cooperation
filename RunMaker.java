@@ -1,4 +1,4 @@
-package cooptest17;
+package cooptest16summary;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -21,11 +21,8 @@ public class RunMaker {
 	private AgentU[] agentUArray;
 	private int agentUCount, stepsPerEpisode; // we are using these to create a norm for thresholds of AgentU objects. // removed to CoopBuilder
 	private double agentUpopThrMean, agentUpopThrSD;
-	//private int runsPerSet; // v3.0.0
 	private String strPathOut;
-	//private boolean validation; v4.0.0
 	private String objective;
-	//private String calibrationFolderDateTime; v4.2.0
 	private Registrar registrar;
 	private ArrayList<String> algorithmList; // v4.0.0
 	
@@ -38,19 +35,16 @@ public class RunMaker {
 	private double[] thresholds; // v4.2.0
 	
 	public RunMaker(AgentG agentG, AgentU[] agentUArray, int agentUCount, int stepsPerEpisode, 
-			double agentUpopThrMean, double agentUpopThrSD, /*int runsPerSet,*/ String strPathOut, 
-			/*boolean validation,*/ String objective, /*String calibrationFolderDateTime,*/
+			double agentUpopThrMean, double agentUpopThrSD, String strPathOut, 
+			String objective, 
 			Registrar registrar, ArrayList<String> algorithmList) {
 		this.agentG = agentG;
 		this.agentUArray = agentUArray;
 		this.agentUCount = agentUCount;
 		this.stepsPerEpisode = stepsPerEpisode;
 		this.agentUpopThrMean = agentUpopThrMean; this.agentUpopThrSD = agentUpopThrSD;	
-		//this.runsPerSet = runsPerSet; // v3.0.0
 		this.strPathOut = strPathOut;
-		//this.validation = validation; // v4.0.0
 		this.objective = objective;
-		//this.calibrationFolderDateTime = calibrationFolderDateTime; // v4.0.0
 		this.registrar = registrar; 
 		this.algorithmList = algorithmList; // v4.0.0
 		
@@ -71,28 +65,26 @@ public class RunMaker {
 		File folder = new File("output/");
 		File[] listOfFiles = folder.listFiles();
 		// v4.2.0
-		String strMean = String.format("%.2f",agentUpopThrMean); //System.out.print("strMean: "+strMean+" ");
-        strMean = strMean.substring(2,4); //System.out.println(strMean);
-        String strSD = String.format("%.2f",agentUpopThrSD); //System.out.print("strSD: "+strSD+" ");
-        strSD = strSD.substring(2,4); //System.out.println(strSD);
-        String strN = String.valueOf(agentUCount); //System.out.println("strN: "+strN);
+		String strMean = String.format("%.2f",agentUpopThrMean); 
+        strMean = strMean.substring(2,4);
+        String strSD = String.format("%.2f",agentUpopThrSD); 
+        strSD = strSD.substring(2,4);
+        String strN = String.valueOf(agentUCount);
 		//
 		String strPathCalibration = "";
-		//System.out.println("length of \"\" is "+searchResult.length());
+		
 		for (int i = 0 ; i < listOfFiles.length ; i++) {
 			if (listOfFiles[i].getName().contains("_mu"+strMean) &
 				listOfFiles[i].getName().contains("_sd"+strSD) &		// v4.2.0
-				listOfFiles[i].getName().contains("_n"+strN) &		// v4.2.0
-				listOfFiles[i].getName().contains("_thr"))			// v4.2.1
+				listOfFiles[i].getName().contains("_n"+strN) &
+				listOfFiles[i].getName().contains("_thr")) 				// v4.2.0
 			{
-				strPathCalibration = "output/" + listOfFiles[i].getName() +"/"; //System.out.println("strPathCalibration: "+strPathCalibration);
+				strPathCalibration = "output/" + listOfFiles[i].getName() +"/";
 				break;
 			}
 		}
 		if (strPathCalibration.length()==0) {
 			System.out.println("Calibration folder containing thresholds not found.");
-			//System.out.println("If calibration has been performed, enter correct date and time of calibration in parameters.");
-			//System.out.println("If calibration has not been performed, run calibration first.");
 			System.out.println("Run terminated.");
 			RunEnvironment.getInstance().endRun();
 		} 
@@ -101,9 +93,8 @@ public class RunMaker {
 		File [] listOfCalibrationFiles = pathCalibration.listFiles();
 		String strPathThresholds = "";
 		for (int i = 0 ; i < listOfCalibrationFiles.length ; i++) {
-			//System.out.println("listOfCalibrationFiles["+i+"].getName(): "+listOfCalibrationFiles[i].getName());
 			if (listOfCalibrationFiles[i].getName().contains("thresholds")) {
-				strPathThresholds = strPathCalibration + listOfCalibrationFiles[i].getName(); //System.out.println("strPathThresholds: "+strPathThresholds);
+				strPathThresholds = strPathCalibration + listOfCalibrationFiles[i].getName();
 				break;
 			}
 		}
@@ -163,7 +154,6 @@ public class RunMaker {
 		{
 			// reset U's
 			Random r = new Random();
-			// double[] thresholds = new double[agentUCount]; // will be saved on disk // v4.2.0 moved to constructor
 			int thresIndex = 0;
 			for (AgentU agentU : agentUArray) {
 				agentU.setDecision(0);
@@ -192,7 +182,7 @@ public class RunMaker {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} 
+			}
 		} else if (this.objective.contains("Calibration")) // if this.objective is "Calibration"
 		{ // v4.0.0
 			//System.out.println("in RunMaker, tick"+tickCounter); // debugging
@@ -202,9 +192,6 @@ public class RunMaker {
 				agentG.runCalibrationAlgorithm();
 				double[][] lastPolicy = agentG.getPolicy(); // needed for prediction
 
-				// use policy for prediction: make runs in a loop
-				//for (int i = 0; i < runsPerSet; i++) { // v3.0.0 removing sets
-				//agentG.runPrediction(0, lastPolicy);
 				double[] lastRewards = agentG.getRewards();
 				int[][] lastStates = agentG.getStates();
 				int[] lastActions = agentG.getActions();
@@ -223,22 +210,9 @@ public class RunMaker {
 				}
 				//} v3.0.0 removing sets
 			} // end for (algorithm)
-//			try {						// v4.2.0 moved out of if bloc, so that it is run for all cal and val
-//				writeArrayToFile(thresholds, (strPathOut + "/thresholds.txt"));
-//				//			for (int i=0 ; i < lastPolicy.length ; i++) { 					// v4.0.0 moved inside algorithm loop
-//				//				writeArrayToFile(lastPolicy[i], (strPathOut + "/policies.txt"));
-//				//			}
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				System.out.println("Problem!");
-//				e.printStackTrace();
-//			}
 		} // end if (objective is Calibration)
 		try { 						// v4.2.0 moved here, out of if bloc, so that it is run for all cal and val
 			writeArrayToFile(thresholds, (strPathOut + "/thresholds.txt"));
-			//			for (int i=0 ; i < lastPolicy.length ; i++) { 					// v4.0.0 moved inside algorithm loop
-			//				writeArrayToFile(lastPolicy[i], (strPathOut + "/policies.txt"));
-			//			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			System.out.println("Problem!");
@@ -247,7 +221,7 @@ public class RunMaker {
 
 	} // end function
 	
-	public static void writeArrayToFile(double[] arrayToWrite, String fileName) throws IOException {
+	private void writeArrayToFile(double[] arrayToWrite, String fileName) throws IOException {
 		String outString = "";
 		for (double x : arrayToWrite) {
 			outString = outString + String.valueOf(x) + " ";
@@ -259,7 +233,7 @@ public class RunMaker {
 	}
 	
 	// 
-	public static void writeArrayToFile(int[] arrayToWrite, String fileName) throws IOException { // overloading: same function as above, only with int[] arrayToWrite
+	private void writeArrayToFile(int[] arrayToWrite, String fileName) throws IOException { // overloading: same function as above, only with int[] arrayToWrite
 		String outString = "";
 		for (int x : arrayToWrite) {
 			outString = outString + String.valueOf(x) + " ";
